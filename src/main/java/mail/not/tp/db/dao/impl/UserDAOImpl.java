@@ -162,12 +162,12 @@ public class UserDAOImpl implements UserDAO {
 
         final List<String> array = new ArrayList<>();
 
-        final String query = "SELECT Followers FROM User_followers WHERE User = ?";
+        final String query = "SELECT followers FROM user_followers WHERE user = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    array.add(resultSet.getString("Followers"));
+                    array.add(resultSet.getString("followers"));
                 }
             }
         }
@@ -178,12 +178,12 @@ public class UserDAOImpl implements UserDAO {
 
         final List<String> array = new ArrayList<>();
 
-        final String query = "SELECT User FROM User_followers WHERE Followers = ?";
+        final String query = "SELECT user FROM user_followers WHERE followers = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    array.add(resultSet.getString("User"));
+                    array.add(resultSet.getString("user"));
                 }
             }
         }
@@ -194,7 +194,7 @@ public class UserDAOImpl implements UserDAO {
 
         final List<Integer> array = new ArrayList<>();
 
-        final String query = "SELECT thread_id FROM Thread_followers WHERE follower_email = ?";
+        final String query = "SELECT thread_id FROM thread_followers WHERE follower_email = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
