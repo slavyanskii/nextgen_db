@@ -19,7 +19,6 @@ public class UserController {
 
     @Autowired
     private DataSource dataSource;
-
     private UserDAO userDAO;
 
     @PostConstruct
@@ -31,11 +30,11 @@ public class UserController {
     public Response create(@RequestBody String body) {
         return userDAO.create(body);
     }
-//
-//    @RequestMapping(value = "/details", method = RequestMethod.GET)
-//    public Response details(@RequestParam(value = "user") String email) {
-//        return userDAO.details(email);
-//    }
+
+    @RequestMapping(value = "/details", method = RequestMethod.GET)
+    public Response details(@RequestParam(value = "user") String email) {
+        return userDAO.details(email);
+    }
 //
 //    @RequestMapping(value = "/follow", method = RequestMethod.POST)
 //    public Response follow(@RequestBody String body) {

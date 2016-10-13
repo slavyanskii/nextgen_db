@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by viacheslav on 13.10.16.
@@ -99,7 +101,31 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Response details(String email) {
-        return null;
+
+        final User user;
+
+        try (Connection connection = dataSource.getConnection()) {
+            final String query = "SELECT * FROM user WHERE email = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, email);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        user = new User(resultSet);
+                    } else {
+                        return new Response(Response.Codes.NOT_FOUND);
+                    }
+                }
+            }
+
+            user.setFollowers(getFollowers(connection, email));
+            user.setFollowing(getFollowing(connection, email));
+            user.setSubscriptions(getSubscriptions(connection, email));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Response(Response.Codes.UNKNOWN_ERROR);
+        }
+
+        return new Response(user);
     }
 
     @Override
@@ -130,5 +156,53 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Response updateProfile(String jsonString) {
         return null;
+    }
+
+    public List<String> getFollowers(Connection connection, String email) throws SQLException {
+
+        final List<String> array = new ArrayList<>();
+
+        final String query = "SELECT Followers FROM User_followers WHERE User = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    array.add(resultSet.getString("Followers"));
+                }
+            }
+        }
+        return array;
+    }
+
+    public List<String> getFollowing(Connection connection, String email) throws SQLException {
+
+        final List<String> array = new ArrayList<>();
+
+        final String query = "SELECT User FROM User_followers WHERE Followers = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    array.add(resultSet.getString("User"));
+                }
+            }
+        }
+        return array;
+    }
+
+    public List<Integer> getSubscriptions(Connection connection, String email) throws SQLException {
+
+        final List<Integer> array = new ArrayList<>();
+
+        final String query = "SELECT thread_id FROM Thread_followers WHERE follower_email = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, email);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    array.add(resultSet.getInt("thread_id"));
+                }
+            }
+        }
+        return array;
     }
 }
