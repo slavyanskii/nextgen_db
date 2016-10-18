@@ -1,8 +1,12 @@
 package mail.not.tp.controllers;
 
 import mail.not.tp.db.dao.ForumDAO;
+import mail.not.tp.db.dao.PostDAO;
+import mail.not.tp.db.dao.ThreadDAO;
 import mail.not.tp.db.dao.UserDAO;
 import mail.not.tp.db.dao.impl.ForumDAOImpl;
+import mail.not.tp.db.dao.impl.PostDAOImpl;
+import mail.not.tp.db.dao.impl.ThreadDAOImpl;
 import mail.not.tp.db.dao.impl.UserDAOImpl;
 import mail.not.tp.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +29,26 @@ public class CommonController {
 
     @Autowired
     private DataSource dataSource;
-
     private UserDAO userDAO;
     private ForumDAO forumDAO;
-//    private ThreadDAO threadDAO;
-//    private PostDAO postDAO;
+    private ThreadDAO threadDAO;
+    private PostDAO postDAO;
 
     @PostConstruct
     void init() {
         userDAO = new UserDAOImpl(dataSource);
         forumDAO = new ForumDAOImpl(dataSource);
-//        threadDAO = new ThreadDAOImpl(dataSource);
-//        postDAO = new PostDAOImpl(dataSource);
+        threadDAO = new ThreadDAOImpl(dataSource);
+        postDAO = new PostDAOImpl(dataSource);
     }
 
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public Response status() {
         final Map<String, Integer> response = new ConcurrentHashMap<>();
         response.put("user", userDAO.status());
-//        response.put("thread", threadDAO.status());
+        response.put("thread", threadDAO.status());
         response.put("forum", forumDAO.status());
-//        response.put("post", postDAO.status());
+        response.put("post", postDAO.status());
         return new Response(response);
     }
 
@@ -53,8 +56,8 @@ public class CommonController {
     public Response clear() {
         userDAO.clear();
         forumDAO.clear();
-//        threadDAO.clear();
-//        postDAO.clear();
+        threadDAO.clear();
+        postDAO.clear();
         return new Response(Response.Codes.OK);
     }
 }

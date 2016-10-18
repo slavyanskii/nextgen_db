@@ -13,12 +13,18 @@ package mail.not.tp.models;
 //        5 — такой юзер уже существует
 
 public class Response {
+    private Response object;
+
+    public Response getObject() {
+        return object;
+    }
+
     public enum Codes {
-        OK,
-        NOT_FOUND,
-        INVALID_QUERY,
-        INCORRECT_QUERY,
-        UNKNOWN_ERROR,
+        OK, //0
+        NOT_FOUND, //1
+        INVALID_QUERY, //2
+        INCORRECT_QUERY, //3
+        UNKNOWN_ERROR, //4
         USER_ALREDY_EXIST
     }
 

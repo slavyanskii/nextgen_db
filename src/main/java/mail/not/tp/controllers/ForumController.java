@@ -19,7 +19,6 @@ public class ForumController {
 
     @Autowired
     private DataSource dataSource;
-
     private ForumDAO forumDAO;
 
     @PostConstruct
@@ -32,35 +31,35 @@ public class ForumController {
         return forumDAO.create(body);
     }
 
-//    @RequestMapping(value = "/details", method = RequestMethod.GET)
-//    public Response details(@RequestParam(value = "forum", required = true) String forum,
-//                            @RequestParam(value = "related", required = false) String[] related) {
-//        return forumDAO.details(forum, related);
-//    }
-//
-//    @RequestMapping(value = "/listPosts", method = RequestMethod.GET)
-//    public Response listPosts(@RequestParam(value = "forum", required = true) String forum,
-//                              @RequestParam(value = "since", required = false) String since,
-//                              @RequestParam(value = "limit", required = false) Integer limit,
-//                              @RequestParam(value = "order", required = false) String order,
-//                              @RequestParam(value = "related", required = false) String[] related) {
-//        return forumDAO.listPosts(forum, since, limit, order, related);
-//    }
-//
-//    @RequestMapping(value = "/listThreads", method = RequestMethod.GET)
-//    public Response listThreads(@RequestParam(value = "forum", required = true) String forum,
-//                                @RequestParam(value = "since", required = false) String since,
-//                                @RequestParam(value = "limit", required = false) Integer limit,
-//                                @RequestParam(value = "order", required = false) String order,
-//                                @RequestParam(value = "related", required = false) String[] related) {
-//        return forumDAO.listThreads(forum, since, limit, order, related);
-//    }
-//
-//    @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
-//    public Response listUsers(@RequestParam(value = "forum", required = true) String forum,
-//                              @RequestParam(value = "since_id", required = false) Integer sinceId,
-//                              @RequestParam(value = "limit", required = false) Integer limit,
-//                              @RequestParam(value = "order", required = false) String order) {
-//        return forumDAO.listUsers(forum, sinceId, limit, order);
-//    }
+    @RequestMapping(value = "/details", method = RequestMethod.GET)
+    public Response details(@RequestParam(value = "forum", required = true) String forum,
+                            @RequestParam(value = "related", required = false) String[] related) {
+        return forumDAO.details(forum, related);
+    }
+
+    @RequestMapping(value = "/listPosts", method = RequestMethod.GET)
+    public Response listPosts(@RequestParam(value = "forum", required = true) String forum,
+                              @RequestParam(value = "since", required = false) String since,
+                              @RequestParam(value = "limit", required = false) Integer limit,
+                              @RequestParam(value = "order", required = false) String order,
+                              @RequestParam(value = "related", required = false) String[] related) {
+        return forumDAO.listPosts(forum, since, limit, order, related);
+    }
+
+    @RequestMapping(value = "/listThreads", method = RequestMethod.GET)
+    public Response listThreads(@RequestParam(value = "forum", required = true) String forum,
+                                @RequestParam(value = "since", required = false) String since,
+                                @RequestParam(value = "limit", required = false) Integer limit,
+                                @RequestParam(value = "order", required = false) String order,
+                                @RequestParam(value = "related", required = false) String[] related) {
+        return forumDAO.listThreads(forum, since, limit, order, related);
+    }
+
+    @RequestMapping(value = "/listUsers", method = RequestMethod.GET)
+    public Response listUsers(@RequestParam(value = "forum", required = true) String forum,
+                              @RequestParam(value = "since_id", required = false) Integer sinceId,
+                              @RequestParam(value = "limit", required = false) Integer limit,
+                              @RequestParam(value = "order", required = false) String order) {
+        return forumDAO.listUsers(forum, sinceId, limit, order);
+    }
 }
