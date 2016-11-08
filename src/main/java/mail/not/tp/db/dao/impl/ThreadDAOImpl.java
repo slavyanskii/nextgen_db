@@ -62,14 +62,14 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response create(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
             return new Response(Response.Codes.INVALID_QUERY);
         }
 
-        Thread thread;
+        final Thread thread;
         try {
             thread = new Thread(object);
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "INSERT INTO thread (forum, title, isClosed, user, date, message, slug, isDeleted) VALUES (?,?,?,?,?,?,?,?);";
+            final String query = "INSERT INTO thread (forum, title, isClosed, user, date, message, slug, isDeleted) VALUES (?,?,?,?,?,?,?,?);";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, (String) thread.getForum());
                 preparedStatement.setString(2, thread.getTitle());
@@ -104,14 +104,14 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response details(int threadId, String[] related) {
-        Thread threadModel;
+        final Thread threadModel;
 
         if (related != null && Arrays.asList(related).contains("thread")) {
             return new Response(Response.Codes.INCORRECT_QUERY);
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT * FROM thread WHERE id = ?";
+            final String query = "SELECT * FROM thread WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, threadId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -140,12 +140,12 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response listPosts(int threadId, String since, Integer limit, String sort, String order) {
-        List<Post> array = new ArrayList<>();
+        final List<Post> array = new ArrayList<>();
 
         order = order == null ? "desc" : order;
         sort = sort == null ? "flat" : sort;
 
-        StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder();
 
         if (Objects.equals(sort, "flat")) {
             queryBuilder.append("SELECT * FROM post ");
@@ -206,7 +206,7 @@ public class ThreadDAOImpl implements ThreadDAO {
                 }
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        Post post = new Post(resultSet);
+                        final Post post = new Post(resultSet);
                         if (Objects.equals(sort, "parent_tree") && limit != null && post.getParent() == null) {
                             if (limit > 0) {
                                 --limit;
@@ -228,11 +228,11 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response listUserThreads(String user, String since, Integer limit, String order) {
-        List<Thread> array = new ArrayList<>();
+        final List<Thread> array = new ArrayList<>();
 
         order = order == null ? "desc" : order;
 
-        StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM thread ");
         queryBuilder.append("WHERE user = ? ");
         if (since != null) {
@@ -266,7 +266,7 @@ public class ThreadDAOImpl implements ThreadDAO {
                 }
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        Thread threadModel = new Thread(resultSet);
+                        final Thread threadModel = new Thread(resultSet);
                         array.add(threadModel);
                     }
                 }
@@ -282,11 +282,11 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response listForumThreads(String forum, String since, Integer limit, String order) {
-        List<Thread> array = new ArrayList<>();
+        final List<Thread> array = new ArrayList<>();
 
         order = order == null ? "desc" : order;
 
-        StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT * FROM thread ");
         queryBuilder.append("WHERE forum = ? ");
         if (since != null) {
@@ -320,7 +320,7 @@ public class ThreadDAOImpl implements ThreadDAO {
                 }
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        Thread thread = new Thread(resultSet);
+                        final Thread thread = new Thread(resultSet);
                         array.add(thread);
                     }
                 }
@@ -335,7 +335,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response remove(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -343,13 +343,13 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE thread SET isDeleted = 1 WHERE id = ?;";
+            final String query = "UPDATE thread SET isDeleted = 1 WHERE id = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, object.get("thread").getAsInt());
                 preparedStatement.execute();
             }
 
-            String updatePostsQuery = "UPDATE post SET isDeleted = 1 WHERE thread = ?;";
+            final String updatePostsQuery = "UPDATE post SET isDeleted = 1 WHERE thread = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(updatePostsQuery)) {
                 preparedStatement.setInt(1, object.get("thread").getAsInt());
                 preparedStatement.execute();
@@ -364,7 +364,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response restore(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -372,14 +372,14 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            int postsCount;
-            String updatePostsQuery = "UPDATE post SET isDeleted = 0 WHERE thread = ?;";
+            final int postsCount;
+            final String updatePostsQuery = "UPDATE post SET isDeleted = 0 WHERE thread = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(updatePostsQuery)) {
                 preparedStatement.setInt(1, object.get("thread").getAsInt());
                 postsCount = preparedStatement.executeUpdate();
             }
 
-            String query = "UPDATE thread SET isDeleted = 0, posts = ? WHERE id = ?;";
+            final String query = "UPDATE thread SET isDeleted = 0, posts = ? WHERE id = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, postsCount);
                 preparedStatement.setInt(2, object.get("thread").getAsInt());
@@ -395,7 +395,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response update(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -403,7 +403,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE thread SET slug = ?, message = ? WHERE id = ?";
+            final String query = "UPDATE thread SET slug = ?, message = ? WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, object.get("slug").getAsString());
                 preparedStatement.setString(2, object.get("message").getAsString());
@@ -420,17 +420,17 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response vote(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
             return new Response(Response.Codes.INVALID_QUERY);
         }
 
-        String likeQuery = "UPDATE thread SET likes = likes + 1 WHERE id = ?";
-        String dislikeQuery = "UPDATE thread SET dislikes = dislikes + 1 WHERE id = ?";
+        final String likeQuery = "UPDATE thread SET likes = likes + 1 WHERE id = ?";
+        final String dislikeQuery = "UPDATE thread SET dislikes = dislikes + 1 WHERE id = ?";
 
-        String query = object.get("vote").getAsInt() > 0 ? likeQuery : dislikeQuery;
+        final String query = object.get("vote").getAsInt() > 0 ? likeQuery : dislikeQuery;
 
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -448,7 +448,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response subscribe(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -456,7 +456,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "INSERT IGNORE INTO thread_followers (user, thread) VALUES (?,?);";
+            final String query = "INSERT IGNORE INTO thread_followers (user, thread) VALUES (?,?);";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, object.get("user").getAsString());
                 preparedStatement.setInt(2, object.get("thread").getAsInt());
@@ -472,7 +472,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response unsubscribe(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -480,7 +480,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "DELETE FROM thread_followers WHERE user = ? AND thread = ?;";
+            final String query = "DELETE FROM thread_followers WHERE user = ? AND thread = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, object.get("user").getAsString());
                 preparedStatement.setInt(2, object.get("thread").getAsInt());
@@ -496,7 +496,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response open(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -504,7 +504,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE thread SET isClosed = 0 WHERE id = ?";
+            final String query = "UPDATE thread SET isClosed = 0 WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, object.get("thread").getAsInt());
                 preparedStatement.execute();
@@ -519,7 +519,7 @@ public class ThreadDAOImpl implements ThreadDAO {
 
     @Override
     public Response close(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -527,7 +527,7 @@ public class ThreadDAOImpl implements ThreadDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE thread SET isClosed = 1 WHERE id = ?";
+            final String query = "UPDATE thread SET isClosed = 1 WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, object.get("thread").getAsInt());
                 preparedStatement.execute();

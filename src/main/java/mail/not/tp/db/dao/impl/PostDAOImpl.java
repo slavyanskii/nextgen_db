@@ -56,14 +56,14 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response create(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
             return new Response(Response.Codes.INVALID_QUERY);
         }
 
-        Post post;
+        final Post post;
         try {
             post = new Post(object);
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class PostDAOImpl implements PostDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "INSERT INTO post (date, thread, message, user, forum, parent, isApproved, isHighlighted, isEdited, isSpam, isDeleted) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            final String query = "INSERT INTO post (date, thread, message, user, forum, parent, isApproved, isHighlighted, isEdited, isSpam, isDeleted) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 preparedStatement.setString(1, post.getDate());
                 preparedStatement.setInt(2, (Integer) post.getThread());
@@ -102,10 +102,10 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response details(int postId, String[] related) {
-        Post postModel;
+        final Post postModel;
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "SELECT * FROM post WHERE id = ?";
+            final String query = "SELECT * FROM post WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, postId);
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -147,7 +147,7 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response remove(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -155,7 +155,7 @@ public class PostDAOImpl implements PostDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE post SET isDeleted = 1 WHERE id = ?;";
+            final String query = "UPDATE post SET isDeleted = 1 WHERE id = ?;";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, object.get("post").getAsInt());
                 preparedStatement.execute();
@@ -170,7 +170,7 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response restore(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -178,7 +178,7 @@ public class PostDAOImpl implements PostDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE post SET isDeleted = 0 WHERE id = ?";
+            final String query = "UPDATE post SET isDeleted = 0 WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, object.get("post").getAsInt());
                 preparedStatement.execute();
@@ -193,7 +193,7 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response update(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
@@ -201,7 +201,7 @@ public class PostDAOImpl implements PostDAO {
         }
 
         try (Connection connection = dataSource.getConnection()) {
-            String query = "UPDATE post SET message = ? WHERE id = ?";
+            final String query = "UPDATE post SET message = ? WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, object.get("message").getAsString());
                 preparedStatement.setInt(2, object.get("post").getAsInt());
@@ -217,17 +217,17 @@ public class PostDAOImpl implements PostDAO {
 
     @Override
     public Response vote(String jsonString) {
-        JsonObject object;
+        final JsonObject object;
         try {
             object = new JsonParser().parse(jsonString).getAsJsonObject();
         } catch (JsonSyntaxException e) {
             return new Response(Response.Codes.INVALID_QUERY);
         }
 
-        String likeQuery = "UPDATE post SET likes = likes + 1 WHERE id = ?";
-        String dislikeQuery = "UPDATE post SET dislikes = dislikes + 1 WHERE id = ?";
+        final String likeQuery = "UPDATE post SET likes = likes + 1 WHERE id = ?";
+        final String dislikeQuery = "UPDATE post SET dislikes = dislikes + 1 WHERE id = ?";
 
-        String query = object.get("vote").getAsInt() > 0 ? likeQuery : dislikeQuery;
+        final String query = object.get("vote").getAsInt() > 0 ? likeQuery : dislikeQuery;
 
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {

@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>mail.not.tp</groupId>
-    <artifactId>nextgen_db</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <artifactId>nextgenDB</artifactId>
+    <version>0.3</version>
     <packaging>jar</packaging>
 
 
