@@ -1,6 +1,5 @@
 package mail.not.tp.conf;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -29,7 +28,6 @@ public class Config {
         basicDataSource.setPassword(env.getProperty("db.password"));
         basicDataSource.setMaxTotal(Integer.parseInt(env.getProperty("db.max-active")));
         basicDataSource.setInitialSize(Integer.parseInt(env.getProperty("db.initial-size")));
-        basicDataSource.setValidationQuery(env.getProperty("db.validation-query"));
         return basicDataSource;
     }
 }
