@@ -20,4 +20,4 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
-create_forum.sql
+create_forum.sql slavyanskii
