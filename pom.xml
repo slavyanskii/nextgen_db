@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>ru.tp.forum</groupId>
-	<artifactId>nextgenDB</artifactId>
-	<version>0.3</version>
+	<artifactId>nextgen</artifactId>
+	<version>0.3test</version>
 	<packaging>jar</packaging>
 
 	<name>nextgen_DB</name>

@@ -35,7 +35,7 @@ public class PostDAOImpl implements PostDAO {
     @Override
     public int status() {
         try {
-            final String query = "SELECT COUNT(*) FROM Post;";
+            final String query = "SELECT posts FROM Post;";
             return this.jdbcTemplate.queryForObject(query, Integer.class);
         } catch (DataAccessException e) {
             e.printStackTrace();
